@@ -1,4 +1,3 @@
-import React from "react";
 import axios from "axios";
 
 const API_KEY = '42470920-96122d8b93373a33cc6d0556a';
@@ -13,4 +12,5 @@ return {
 };
 };
 const Api = { fetchPhotos };
+
 export default Api;
