@@ -6,6 +6,7 @@ import Button from "./Button/Button";
 import Modal from "./Modal/Modal";
 import Loader from "./Loader/Loader";
 import OnError from "./OnError/OnError";
+import css from "./App.module.css";
 
 
 class App extends Component {
@@ -83,7 +84,7 @@ async componentDidUpdate(prevProps, prevState) {
     const { query } = this.state;
     this.setState({ isLoading: true });
     try {
-      const fetchedData = await Api.fetchedDataQuery(query, 1);
+      const fetchedData = await Api.fetchPhotos(query, 1);
       const mapedImages = this.downloadNewImages(fetchedData.images);
       const lastPage = Math.ceil(fetchedData.total / 12);
       this.setState({ 
