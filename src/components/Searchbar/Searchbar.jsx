@@ -21,8 +21,8 @@ render() {
 
   name="query"
   type="text"
-  autocomplete="off"
-  
+  autoComplete="off"
+  autoFocus
   placeholder="Search images and photos"
 />
 </form>

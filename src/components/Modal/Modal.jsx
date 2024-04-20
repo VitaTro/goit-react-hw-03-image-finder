@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import css from "./Modal.module.css";
 
  class Modal extends Component {
     componentDidMount() {
@@ -11,14 +12,13 @@ import PropTypes from "prop-types";
     render() {
       const { closeHandler, imgSrc, imgAlt } = this.props;
        return (
-        <div onClick={ closeHandler }>
-  <div>
+        <div onClick={ closeHandler } className={css.overlay}>
+  <div className={css.modal}>
     <img src={imgSrc} alt={imgAlt} />
   </div>
 </div>
-    )
+    );
     }
- 
  }
 
  Modal.propTypes = {
