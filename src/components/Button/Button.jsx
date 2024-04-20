@@ -1,9 +1,16 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-const Button = () => {
+const Button = ({ onClick }) => {
     return(
-        <button> Load More </button>
-    )
+        <div>
+            <button onClick={onClick}> Load More </button>
+        </div>
+        
+    );
+};
+Button.propTypes = {
+    onClick: PropTypes.func.isRequired,
 }
 
 export default Button;

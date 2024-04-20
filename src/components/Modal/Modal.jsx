@@ -1,8 +1,8 @@
 import React from "react";
  const Modal = () => {
     return (
-        <div class="overlay">
-  <div class="modal">
+        <div>
+  <div>
     <img src="" alt="" />
   </div>
 </div>
