@@ -10,7 +10,7 @@ const ImageGalleryItem = ({ id, src, alt, data, clickHandler }) => {
   alt = { alt }
   data-source = { data }
   onClick = { clickHandler } 
-  />
+  ></img>
 </li>
     )
 };

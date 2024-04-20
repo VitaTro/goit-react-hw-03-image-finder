@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 class Searchbar extends Component {
-  handleSubmit = (evt) => {
-    evt.preventDefault();
-  const searchForm = evt.currentTarget;
-  const query = searchForm.element.query.value;
+  handleSubmit = (e) => {
+    e.preventDefault();
+  const searchForm = e.currentTarget;
+  const query = searchForm.elements.query.value;
   this.props.onSubmit({ query });
-  }
+  };
 
 render() {
   return(
@@ -22,15 +22,13 @@ render() {
   name="query"
   type="text"
   autocomplete="off"
-  autofocus
+  
   placeholder="Search images and photos"
 />
 </form>
 </header>
 )
 } 
-    
-
 };
 Searchbar.propTypes = {
     onSubmit: PropTypes.func.isRequired,

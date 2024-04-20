@@ -6,7 +6,8 @@ import PropTypes from "prop-types";
 class ImageGallery extends Component  {
     componentDidUpdate(prevProps) {
         if( 
-            this.props.page !== 1 && this.props.images.length !== prevProps.images.length
+            this.props.page !== 1 && 
+            this.props.images.length !== prevProps.images.length
         ) {
             window.scrollBy({ top: 500, behavior:"smooth" });
         }

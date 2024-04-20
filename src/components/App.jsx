@@ -1,23 +1,11 @@
 import React, { Component } from "react";
-import axios from "axios";
+import Api from "./Api";
 import Searchbar from "./Searchbar/Searchbar";
 import ImageGallery from "./ImageGallery/ImageGallery";
 import Button from "./Button/Button";
 import Modal from "./Modal/Modal";
-
-
-const API_KEY = '42470920-96122d8b93373a33cc6d0556a';
-const fetchPhotos = async (query, page) => {
-  try {
-    const response = await axios.get(
-  `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&per_page=12&page=${page}`
-); 
-return response.data;
-  } catch (error) {
-    return { error: error.message };
-  }
-
-};
+import Loader from "./Loader/Loader";
+import OnError from "./OnError/OnError";
 
 
 class App extends Component {
@@ -29,30 +17,32 @@ class App extends Component {
     actualPage: 1,
     lastPage: 1,
     modalOpen: false,
-  }  
+  };  
 
-  modalInfo = {
-    modalPhotoURL: null,
-    modalAlt: null,
-  };
 
   updateQuery = ({ query }) => {
     this.setState({  query: query });
   };
 
   // вікно модальне
+  modalInfo = {
+    modalPhotoURL: null,
+    modalAlt: null,
+  };
+  // відкрити
   openModal = (evt) => {
 this.setState({
   modalOpen: true,
 });
 
-this.modalInfo = {
-  modalPhotoURL: evt.target.dataset['source'],
-  modalAlt: evt.target.alt,
-};
+        this.modalInfo = {
+          modalPhotoURL: evt.target.dataset['source'],
+          modalAlt: evt.target.alt,
+        };
   }; 
 
-  // якщо немає картинок, то вікно не відкриється
+
+  //закрити вікно
   closeModal = (evt) => {
     if(evt.target.nodeName !== "IMG") {
       this.setState({
@@ -60,15 +50,23 @@ this.modalInfo = {
       });
     }
   };
+  // закриття вікна модального через клавішу 
+  closeModalEsc = (evt) =>{
+    if(evt.key === "ESC") {
+      this.setState({
+        modalOpen:false,
+      });
+    }
+  }
 // завантаження нових фото 
   downloadNewImages = (fetchedImages) => {
-const downloadMapImages = fetchedImages.map((image) => ({
-  id: image.id,
+const mapedImages = fetchedImages.map((image) => ({
+      id: image.id,
       small: image.webformatURL,
 			large: image.largeImageURL,
 			alt: image.tags,
 }));
-   return downloadMapImages;
+   return mapedImages;
   };
 
 // притиск на наступну сторінку
@@ -76,74 +74,78 @@ const downloadMapImages = fetchedImages.map((image) => ({
 let { actualPage } = this.state;
 actualPage++;
 this.setState({ actualPage: actualPage });
-  }
+  };
+
   // асинхронічна функція
   // приймає значення попередній пропс і попередній стейт
-async componentDidUpdate( prevProps, prevState) {
-  // якщо попередній стейт не такий як зараз, то запит стає актуальним
-  if( prevState.query !== this.state.query) {
-    
-    // актуалізується лоодінг 
-  
-  // якщо виконуються всі задачі 
-try {
-  // Виконується запит до API для отримання зображень на основі оновленого запиту
-
-  const fetchedData = await fetchPhotos( this.state.query, 1);
-  // йде завантаження всіх картинок 
-  const mapImages = this.mapImages(fetchedData.hits);
-  // на сторінці має бути по 12 картинок, 
-  // тому дані обчислюються, скільки картинок буде на останній сторінці
-  const lastPage = Math.ceil(fetchedData.totalHits / 12 );
-// обчислюються картинки, актуальна сторінка і останнч сторінка
-  this.setState({ images: mapImages, actualPage: 1, lastPage: lastPage });
-// скролл
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  // якщо ж виникає помилка, то з'являється комунікат
-} catch (error) {
-    this.setState({ error });
-  }
+async componentDidUpdate(prevProps, prevState) {
+  if (prevState.query !== this.state.query) {
+    const { query } = this.state;
+    this.setState({ isLoading: true });
+    try {
+      const fetchedData = await Api.fetchedDataQuery(query, 1);
+      const mapedImages = this.downloadNewImages(fetchedData.images);
+      const lastPage = Math.ceil(fetchedData.total / 12);
+      this.setState({ 
+        images: mapedImages,
+        actualPage: 1,
+        lastPage: lastPage,
+      });
+    } catch (error) {
+      this.setState ({ error });
+    } finally {
+      this.setState({ isLoading: false })
+    }
   }
 
 
-// якщо змінилася актуальна сторінка (actualPage) у поточному стані порівняно з попереднім станом, 
-// і чи запит залишається незмінним
-if( 
+  if (
+    prevState.actualPage !== this.state.actualPage &&
+    prevState.query === this.state.query &&
+    this.state.actualPage !== 1
+  ) {
+    const { query, actualPage, images } = this.state;
+    this.setState({ isLoading: true });
+    try {
+      const fetchedData = await Api.fetchedDataQuery(query, actualPage);
+      const mapedImages =await this.downloadNewImages(fetchedData.images);
+      const concatImages = images.concat(mapedImages);
+      this.setState({ images: concatImages });
+    } catch (error) {
+      this.setState ({ error });
+    } finally {
+      this.setState ({ isLoading: false});
+    }
+  }
+}
 
-  prevState.actualPage !== this.state.actualPage &&
-  prevState.query === this.state.query &&
-  this.state.actualPage !== 1
-) {
-try {
- // запит встановлюєтья в поточну сторінку
- const fetchedData = await fetchPhotos( this.state.query, this.state.actualPage);
- // йде завантаження всіх картинок з поточного стану
- const mapImages =  this.mapImages(fetchedData.hits);
-// картинки нові об'єднуюються зі старими картинками
- const concatImages = this.state.images.concat(mapImages);
-//  йде завантаження нових картинок
- this.setState({ images: concatImages });
-} catch(error) {
-   // якщо ж виникає помилка, то з'являється комунікат
-this.setState({ error });
-}
-}
-}
+
   render() {
     const { images, isLoading, actualPage, lastPage, modalOpen, query } = this.state;
-    
+    const { modalPhotoURL, modalAlt } = this.modalInfo;
     return(
   <>
-  <Modal />
-    <Searchbar onSubmit={this.updateQuery} />
+  {modalOpen && (
+    <Modal 
+    imgSrc={modalPhotoURL}
+    imgAlt={modalAlt}
+    closeHandler={this.closeModal}
+    closeModalEsc={this.closeModalEsc}
+    ></Modal>
+  )}
+  <Searchbar onSubmit={this.updateQuery} />
    <ImageGallery
    page = { actualPage }
    images = { images }
    clickHandler = { this.openModal }
    > 
-  
-    <Button onClick={ this.nextPage }/>
    </ImageGallery>
+   {actualPage !== lastPage && images.length > 0 && !isLoading ? (
+     <Button onClick={ this.nextPage }/>
+   ): null }
+   {isLoading && <Loader/>}
+   {images.length === 0 && query && !isLoading && <OnError>Nothing found! Try again</OnError>}
+  
    
   </>
  
