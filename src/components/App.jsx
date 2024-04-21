@@ -6,7 +6,6 @@ import Button from "./Button/Button";
 import Modal from "./Modal/Modal";
 import Loader from "./Loader/Loader";
 import OnError from "./OnError/OnError";
-import css from "./App.module.css";
 
 
 class App extends Component {

@@ -25,3 +25,13 @@ html {
 *::after {
   box-sizing: inherit;
 }
+/*
+ * Стили компонента App
+ */
+ .App {
+  display: grid;
+  background-color: aliceblue;
+  grid-gap: 16px;
+  padding-bottom: 30px;
+grid-template-columns: 1fr;
+}
