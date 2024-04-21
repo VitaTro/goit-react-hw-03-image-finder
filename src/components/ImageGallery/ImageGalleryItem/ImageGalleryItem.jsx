@@ -4,7 +4,7 @@ import css from "./ImageGalleryItem.module.css";
 
 const ImageGalleryItem = ({ id, src, alt, data, clickHandler }) => {
     return(
-        <li className={css['gallery-item']}>
+        <li className={css["gallery-item"]}>
   <img 
   id = { id }
   src = { src } 
