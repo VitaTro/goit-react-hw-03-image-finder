@@ -17,7 +17,7 @@ class App extends Component {
     error: null,
     actualPage: 1,
     lastPage: 1,
-    modalOpen: false,
+    modalIsOpen: false,
   };  
 
 
@@ -31,34 +31,35 @@ class App extends Component {
     modalAlt: null,
   };
   // відкрити
-  openModal = (evt) => {
+  openModal = (e) => {
 this.setState({
-  modalOpen: true,
+  modalIsOpen: true,
 });
 
         this.modalInfo = {
-          modalPhotoURL: evt.target.dataset['source'],
-          modalAlt: evt.target.alt,
+          modalPhotoURL: e.target.dataset['data-source'],
+          modalAlt: e.target.alt,
         };
   }; 
 
 
   //закрити вікно
-  closeModal = (evt) => {
-    if(evt.target.nodeName !== "IMG") {
+  closeModal = (e) => {
+    if(e.target.nodeName !== "IMG") {
       this.setState({
-        modalOpen: false,
+        modalIsOpen: false,
       });
     }
   };
+
   // закриття вікна модального через клавішу 
-  closeModalEsc = (evt) =>{
-    if(evt.key === "ESC") {
+  closeModalWithButton = (e) =>{
+    if(e.key === "Escape") {
       this.setState({
-        modalOpen:false,
+        modalIsOpen:false,
       });
     }
-  }
+  };
 // завантаження нових фото 
   downloadNewImages = (fetchedImages) => {
 const mapedImages = fetchedImages.map((image) => ({
@@ -122,19 +123,19 @@ async componentDidUpdate(prevProps, prevState) {
 
 
   render() {
-    const { images, isLoading, actualPage, lastPage, modalOpen, query } = this.state;
+    const { images, isLoading, actualPage, lastPage, modalIsOpen, query } = this.state;
     const { modalPhotoURL, modalAlt } = this.modalInfo;
     return(
   <>
-  {modalOpen && (
+  {modalIsOpen && (
     <Modal 
-    imgSrc={modalPhotoURL}
-    imgAlt={modalAlt}
-    closeHandler={this.closeModal}
-    closeModalEsc={this.closeModalEsc}
+    imgSrc={ modalPhotoURL }
+    imgAlt={ modalAlt }
+    closeHandler={ this.closeModal }
+    closeModalWithButton={ this.closeModalWithButton }
     ></Modal>
   )}
-  <Searchbar onSubmit={this.updateQuery} />
+  <Searchbar onSubmit={ this.updateQuery } />
    <ImageGallery
    page = { actualPage }
    images = { images }
@@ -144,7 +145,7 @@ async componentDidUpdate(prevProps, prevState) {
    {actualPage !== lastPage && images.length > 0 && !isLoading ? (
      <Button onClick={ this.nextPage }/>
    ): null }
-   {isLoading && <Loader/>}
+   {isLoading && <Loader />}
    {images.length === 0 && query && !isLoading && <OnError>Nothing found! Try again</OnError>}
   
    
