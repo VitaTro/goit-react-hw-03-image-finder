@@ -6,6 +6,7 @@ const ImageGalleryItem = ({ id, src, alt, data, clickHandler }) => {
     return(
         <li className={css["gallery-item"]}>
   <img 
+  className={css["gallery-image"]}
   id = { id }
   src = { src } 
   alt = { alt }

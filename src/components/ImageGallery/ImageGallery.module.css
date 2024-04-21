@@ -5,12 +5,11 @@
     display: grid;
     max-width: calc(100vw - 48px);
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    grid-gap: 10px;
-    row-gap: 15px;
-    margin-top: 10;
-    margin-right: 10px;
-    margin-bottom: 0;
+    grid-gap: 16px;
+    margin-top: 3vh;
+    margin-bottom: 3vh;
     padding: 0;
     list-style: none;
-    margin-left: 13px;
+    margin-left: auto;
+    margin-right: auto;
 }

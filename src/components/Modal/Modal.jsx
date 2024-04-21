@@ -4,13 +4,14 @@ import css from "./Modal.module.css";
 
  class Modal extends Component {
     componentDidMount() {
-      document.addEventListener('keydown',this.props.escHandler);
+      document.addEventListener("keydown",this.props.escHandler);
     }
     componentWillUnmount() {
-      document.removeEventListener('keydown', this.props.escHandler);
+      document.removeEventListener("keydown", this.props.escHandler);
     }
+
     render() {
-      const { closeHandler, imgSrc, imgAlt } = this.props;
+      const { imgSrc, imgAlt, closeHandler } = this.props;
        return (
         <div onClick={ closeHandler } className={css.overlay}>
   <div className={css.modal}>
